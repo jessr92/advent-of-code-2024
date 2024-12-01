@@ -6,14 +6,14 @@ from functools import reduce
 
 def part_1(locations: list[str]) -> int:
     left_locations, right_locations = extract_sorted_locations(locations)
-    distances = [abs(left - right) for left, right, in zip(left_locations, right_locations)]
+    distances: list[int] = [abs(left - right) for left, right, in zip(left_locations, right_locations)]
     return sum(distances)
 
 
 def part_2(locations: list[str]) -> int:
     left_locations, right_locations = extract_sorted_locations(locations)
-    location_occurrences: dict[int, int] = Counter(right_locations)
-    return reduce(lambda similarity, location: similarity + (location * location_occurrences[location]), left_locations, 0)
+    right_occurrences: dict[int, int] = Counter(right_locations)
+    return reduce(lambda similarity, location: similarity + (location * right_occurrences[location]), left_locations, 0)
 
 
 def extract_sorted_locations(locations):
