@@ -1,23 +1,19 @@
 import bisect
 import re
 from collections import Counter
+from functools import reduce
 
 
 def part_1(locations: list[str]) -> int:
     left_locations, right_locations = extract_sorted_locations(locations)
-    distance: int = 0
-    for i in range(len(left_locations)):
-        distance = distance + abs(left_locations[i] - right_locations[i])
-    return distance
+    distances = [abs(left - right) for left, right, in zip(left_locations, right_locations)]
+    return sum(distances)
 
 
 def part_2(locations: list[str]) -> int:
     left_locations, right_locations = extract_sorted_locations(locations)
     location_occurrences: dict[int, int] = Counter(right_locations)
-    similarity: int = 0
-    for location in left_locations:
-        similarity = similarity + (location * location_occurrences[location])
-    return similarity
+    return reduce(lambda similarity, location: similarity + (location * location_occurrences[location]), left_locations, 0)
 
 
 def extract_sorted_locations(locations):
