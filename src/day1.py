@@ -1,7 +1,8 @@
 import bisect
-import re
 from collections import Counter
 from functools import reduce
+
+from string_utils import string_to_list_ints
 
 
 def part_1(locations: list[str]) -> int:
@@ -20,7 +21,7 @@ def extract_sorted_locations(locations):
     left_locations: list[int] = []
     right_locations: list[int] = []
     for location in locations:
-        extracted_locations = re.findall(r'\d+', location)
+        extracted_locations = string_to_list_ints(location)
         assert len(extracted_locations) == 2
         bisect.insort(left_locations, int(extracted_locations[0]))
         bisect.insort(right_locations, int(extracted_locations[1]))
