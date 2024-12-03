@@ -5,16 +5,16 @@ from functools import reduce
 def part_1(program: list[str]) -> int:
     total: int = 0
     for instructions in program:
-        multiplications: list[str] = re.findall("mul\(\d+,\d+\)", instructions)
+        multiplications: list[str] = re.findall(r'mul\(\d+,\d+\)', instructions)
         total += reduce(lambda x, y: x + multiply(y), multiplications, 0)
     return total
 
 
 def part_2(program: list[str]) -> int:
     total: int = 0
-    multiplication_enabled = True
+    multiplication_enabled: bool = True
     for instructions in program:
-        instruction_list: list[str] = re.findall("do\(\)|don't\(\)|mul\(\d+,\d+\)", instructions)
+        instruction_list: list[str] = re.findall(r'do\(\)|don\'t\(\)|mul\(\d+,\d+\)', instructions)
         for instruction in instruction_list:
             match instruction:
                 case "do()":
