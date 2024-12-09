@@ -5,14 +5,14 @@ Block = namedtuple("Block", ["start_index", "length"])
 
 def part_1(raw_input: list[str]) -> int:
     file_blocks, free_space = parse_input(raw_input)
-    compacted_blocks = block_compaction(file_blocks, free_space)
-    return disk_hash(compacted_blocks)
+    compacted_files = block_compaction(file_blocks, free_space)
+    return disk_hash(compacted_files)
 
 
 def part_2(raw_input: list[str]) -> int:
     file_blocks, free_space = parse_input(raw_input)
-    compacted_blocks = file_compaction(file_blocks, free_space)
-    return disk_hash(compacted_blocks)
+    compacted_files = file_compaction(file_blocks, free_space)
+    return disk_hash(compacted_files)
 
 
 def parse_input(raw_input):
@@ -89,11 +89,11 @@ def find_earliest_free_space_with_length(free_space: list[Block], length: int) -
     return -1, -1
 
 
-def disk_hash(compacted_blocks: list[list[Block]]) -> int:
+def disk_hash(compacted_files: list[list[Block]]) -> int:
     hash_value: int = 0
-    for block_id in range(len(compacted_blocks)):
-        file = compacted_blocks[block_id]
+    for file_id in range(len(compacted_files)):
+        file = compacted_files[file_id]
         for block in file:
             for index in range(block.length):
-                hash_value += (block.start_index + index) * block_id
+                hash_value += (block.start_index + index) * file_id
     return hash_value
