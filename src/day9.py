@@ -91,9 +91,9 @@ def find_earliest_free_space_with_length(free_space: list[Block], length: int) -
 
 def disk_hash(compacted_blocks: list[list[Block]]) -> int:
     hash_value: int = 0
-    for id in range(len(compacted_blocks)):
-        file = compacted_blocks[id]
+    for block_id in range(len(compacted_blocks)):
+        file = compacted_blocks[block_id]
         for block in file:
             for index in range(block.length):
-                hash_value += (block.start_index + index) * id
+                hash_value += (block.start_index + index) * block_id
     return hash_value
