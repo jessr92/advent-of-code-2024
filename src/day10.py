@@ -1,4 +1,4 @@
-from coord import Coord
+from coord import Coord, UP, DOWN, LEFT, RIGHT
 
 
 def part_1(puzzle_input: list[str]) -> int:
@@ -27,10 +27,10 @@ def find_trailheads(grid: list[list[int]], coord: Coord, previous_height: int) -
         return []  # Not a gradual increase
     if current_height == 9:
         return [coord]  # Found a trailhead
-    trailhead_left: list[Coord] = find_trailheads(grid, Coord(coord.x - 1, coord.y), current_height)
-    trailhead_right: list[Coord] = find_trailheads(grid, Coord(coord.x + 1, coord.y), current_height)
-    trailhead_up: list[Coord] = find_trailheads(grid, Coord(coord.x, coord.y - 1), current_height)
-    trailhead_down: list[Coord] = find_trailheads(grid, Coord(coord.x, coord.y + 1), current_height)
+    trailhead_left: list[Coord] = find_trailheads(grid, coord.move(LEFT), current_height)
+    trailhead_right: list[Coord] = find_trailheads(grid, coord.move(RIGHT), current_height)
+    trailhead_up: list[Coord] = find_trailheads(grid, coord.move(UP), current_height)
+    trailhead_down: list[Coord] = find_trailheads(grid, coord.move(DOWN), current_height)
     return trailhead_left + trailhead_right + trailhead_up + trailhead_down
 
 

@@ -1,14 +1,8 @@
 from collections import namedtuple
 
-from coord import Coord
+from coord import Coord, UP, DOWN, LEFT, RIGHT
 
-type Direction = Coord
 Visit = namedtuple("Visit", ["coord", "direction"])
-
-UP: Direction = Coord(0, -1)
-RIGHT: Direction = Coord(1, 0)
-DOWN: Direction = Coord(0, 1)
-LEFT: Direction = Coord(-1, 0)
 
 
 class CycleDetected(Exception):
@@ -38,7 +32,7 @@ def part_2(guard_map: list[str]) -> int:
     return obstacle_choices
 
 
-def travel_through_guard_map(guard_map: list[str], current_position: Coord, direction: Direction) -> set[Visit]:
+def travel_through_guard_map(guard_map: list[str], current_position: Coord, direction: Coord) -> set[Visit]:
     visited: set[Visit] = set()
     visited.add(Visit(current_position, direction))
     while inside_guard_map(guard_map, current_position, direction):
@@ -51,7 +45,7 @@ def travel_through_guard_map(guard_map: list[str], current_position: Coord, dire
     return visited
 
 
-def turn_right(direction: Direction) -> Direction:
+def turn_right(direction: Coord) -> Coord:
     if direction == UP:
         return RIGHT
     elif direction == RIGHT:
@@ -62,11 +56,11 @@ def turn_right(direction: Direction) -> Direction:
         return UP
 
 
-def inside_guard_map(guard_map: list[str], current_position: Coord, direction: Direction) -> bool:
+def inside_guard_map(guard_map: list[str], current_position: Coord, direction: Coord) -> bool:
     return current_position.move(direction).inside_map(len(guard_map[0]), len(guard_map))
 
 
-def can_move(guard_map: list[str], current_position: Coord, direction: Direction) -> bool:
+def can_move(guard_map: list[str], current_position: Coord, direction: Coord) -> bool:
     new_position: Coord = current_position.move(direction)
     return guard_map[new_position.y][new_position.x] != "#"
 
