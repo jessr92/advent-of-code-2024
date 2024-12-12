@@ -24,7 +24,12 @@ class Coord:
     def __repr__(self):
         return f"({self.x}, {self.y})"
 
+
 UP: Coord = Coord(0, -1)
 RIGHT: Coord = Coord(1, 0)
 DOWN: Coord = Coord(0, 1)
 LEFT: Coord = Coord(-1, 0)
+UP_LEFT: Coord = Coord(-1, -1)
+UP_RIGHT: Coord = Coord(1, -1)
+DOWN_LEFT: Coord = Coord(-1, 1)
+DOWN_RIGHT: Coord = Coord(1, 1)
