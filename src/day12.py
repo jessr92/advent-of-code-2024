@@ -1,6 +1,7 @@
 from collections import namedtuple
 
 from coord import Coord, UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT
+from grid import Grid
 
 type Direction = Coord
 
@@ -20,18 +21,17 @@ def part_2(puzzle_input: list[str]) -> int:
     return sum([discounted_region_price(region) for region in regions])
 
 
-def find_regions(puzzle_input):
-    max_x: int = len(puzzle_input[0])
-    max_y: int = len(puzzle_input)
+def find_regions(puzzle_input: list[str]):
+    grid: Grid[str] = Grid(puzzle_input)
     regions: list[(str, set[Coord])] = []
     visited: set[Coord] = set()
-    for y in range(max_y):
-        for x in range(max_x):
+    for y in range(grid.max_y):
+        for x in range(grid.max_x):
             coord: Coord = Coord(x, y)
-            plant: str = puzzle_input[y][x]
+            plant: str = grid.value_at(coord)
             if coord in visited:
                 continue
-            region = set(find_region(coord, puzzle_input, visited))
+            region = set(find_region(coord, grid, visited))
             for coord in region:
                 visited.add(coord)
             if len(region) > 0:
@@ -39,19 +39,17 @@ def find_regions(puzzle_input):
     return regions
 
 
-def find_region(coord: Coord, grid: list[str], visited: set[Coord]) -> list[Coord]:
+def find_region(coord: Coord, grid: Grid[str], visited: set[Coord]) -> list[Coord]:
     if coord in visited:
         return []
     visited.add(coord)
     region_coords: list[Coord] = [coord]
-    max_x: int = len(grid[0])
-    max_y: int = len(grid)
 
     for direction in CARDINAL_DIRECTIONS:
         next_coord = coord.move(direction)
-        if not (0 <= next_coord.x < max_x and 0 <= next_coord.y < max_y):
+        if not grid.inside_map(next_coord):
             continue  # outside of grid
-        if grid[next_coord.y][next_coord.x] != grid[coord.y][coord.x]:
+        if grid.value_at(next_coord) != grid.value_at(coord):
             continue  # wrong plant
         flooded_coords = find_region(next_coord, grid, visited)
         region_coords += flooded_coords

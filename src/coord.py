@@ -6,9 +6,6 @@ class Coord:
         self.x = x
         self.y = y
 
-    def inside_map(self, max_x: int, max_y: int):
-        return 0 <= self.x < max_x and 0 <= self.y < max_y
-
     def move(self, movement):
         return Coord(self.x + movement.x, self.y + movement.y)
 

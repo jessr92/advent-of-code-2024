@@ -1,6 +1,8 @@
+import copy
 from collections import namedtuple
 
 from coord import Coord, UP, DOWN, LEFT, RIGHT
+from grid import Grid
 
 Visit = namedtuple("Visit", ["coord", "direction"])
 
@@ -10,21 +12,22 @@ class CycleDetected(Exception):
         self.message = message
 
 
-def part_1(guard_map: list[str]) -> int:
+def part_1(puzzle_input: list[str]) -> int:
+    guard_map: Grid[str] = Grid(puzzle_input)
     current_position, direction = get_starting_position(guard_map)
     visited: set[Visit] = travel_through_guard_map(guard_map, current_position, direction)
     return len({visit.coord for visit in visited})
 
 
-def part_2(guard_map: list[str]) -> int:
+def part_2(puzzle_input: list[str]) -> int:
+    guard_map: Grid[str] = Grid(puzzle_input)
     current_position, direction = get_starting_position(guard_map)
     visited: set[Visit] = travel_through_guard_map(guard_map, current_position, direction)
     obstacle_candidates: set[Coord] = {visit.coord for visit in visited if visit.coord != current_position}
     obstacle_choices: int = 0
     for obstacle in obstacle_candidates:
-        new_guard_map: list[str] = guard_map[:]
-        row_to_update = new_guard_map[obstacle.y]
-        new_guard_map[obstacle.y] = row_to_update[:obstacle.x] + '#' + row_to_update[obstacle.x + 1:]
+        new_guard_map: Grid[str] = copy.deepcopy(guard_map)
+        new_guard_map.update_grid_at(obstacle, '#')
         try:
             travel_through_guard_map(new_guard_map, current_position, direction)
         except CycleDetected:
@@ -32,7 +35,7 @@ def part_2(guard_map: list[str]) -> int:
     return obstacle_choices
 
 
-def travel_through_guard_map(guard_map: list[str], current_position: Coord, direction: Coord) -> set[Visit]:
+def travel_through_guard_map(guard_map: Grid[str], current_position: Coord, direction: Coord) -> set[Visit]:
     visited: set[Visit] = set()
     visited.add(Visit(current_position, direction))
     while inside_guard_map(guard_map, current_position, direction):
@@ -56,24 +59,26 @@ def turn_right(direction: Coord) -> Coord:
         return UP
 
 
-def inside_guard_map(guard_map: list[str], current_position: Coord, direction: Coord) -> bool:
-    return current_position.move(direction).inside_map(len(guard_map[0]), len(guard_map))
+def inside_guard_map(guard_map: Grid, current_position: Coord, direction: Coord) -> bool:
+    return guard_map.inside_map(current_position.move(direction))
 
 
-def can_move(guard_map: list[str], current_position: Coord, direction: Coord) -> bool:
+def can_move(guard_map: Grid[str], current_position: Coord, direction: Coord) -> bool:
     new_position: Coord = current_position.move(direction)
-    return guard_map[new_position.y][new_position.x] != "#"
+    return guard_map.value_at(new_position) != "#"
 
 
-def get_starting_position(guard_map: list[str]) -> (Coord, Coord):
-    for x in range(len(guard_map[0])):
-        for y in range(len(guard_map)):
-            if guard_map[y][x] == "^":
+def get_starting_position(guard_map: Grid[str]) -> (Coord, Coord):
+    for x in range(guard_map.max_x):
+        for y in range(guard_map.max_y):
+            coord: Coord = Coord(x, y)
+            map_elem: str = guard_map.value_at(coord)
+            if map_elem == "^":
                 return Coord(x, y), UP
-            elif [guard_map[y][x]] == ">":
+            elif map_elem == ">":
                 return Coord(x, y), RIGHT
-            elif [guard_map[y][x]] == "<":
+            elif map_elem == "<":
                 return Coord(x, y), LEFT
-            elif [guard_map[y][x]] == "v":
+            elif map_elem == "v":
                 return Coord(x, y), DOWN
     raise Exception("Could not find guard")
